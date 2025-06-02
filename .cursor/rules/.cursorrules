@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursorRulers project="Echo" version="1.1" author="InspirationSource">
+
+    <developmentRules>
+        <rootPrinciples name="The Three Core Principles">
+            <principle id="P-01" name="Philosophy-Driven Development">
+                <description>
+                    All technical decisions must serve the five design pillars: Flowing Light, Glaze/Crystal, Rhythm, Breath, and Character. Before implementing any feature, you must ask: "Does this implementation reflect our design philosophy?"
+                </description>
+            </principle>
+            <principle id="P-02" name="Performance-First Mentality">
+                <description>
+                    User experience is paramount. Prioritize performance in all aspects, especially in animations, gestures, and list rendering. Strive for a consistent 60+ FPS. Proactively identify and eliminate any source of jank.
+                </description>
+            </principle>
+            <principle id="P-03" name="Code is Communication">
+                <description>
+                    Write clean, self-documenting, and maintainable code. The code itself should be as elegant and understandable as the final UI. Use TypeScript rigorously to ensure type safety and clarity.
+                </description>
+            </principle>
+            <principle id="P-04" name="Adherence to Apple's Human Interface Guidelines">
+                <description>
+                    All UI/UX decisions, from layout and typography to interaction patterns, must align with Apple's Human Interface Guidelines (HIG). This ensures the app feels intuitive, familiar, and native to users within the iOS ecosystem. Refer to the official HIG documentation for guidance on components like navigation bars, tab bars, modals, and gestures to create a premium and seamless experience.
+                </description>
+            </principle>
+            <principle id="P-05" name="Expo-First Principle">
+                <description>
+                    When selecting a third-party library, if a well-maintained, equivalent library is officially provided by Expo (e.g., `expo-blur`, `expo-font`), we MUST prioritize the official Expo library to ensure maximum compatibility and the simplest build process.
+                </description>
+            </principle>
+        </rootPrinciples>
+
+        <directives name="Specific Technical Directives">
+            <rule category="Project Structure">
+                <instruction id="S-01" name="Standardized Directory Layout">
+                    Use the following directory structure inside `/src`: `/api`, `/assets`, `/components`, `/hooks`, `/navigation`, `/screens`, `/state`, `/styles`, `/types`, `/utils`.
+                </instruction>
+                <instruction id="S-02" name="Component Organization">
+                    Organize components using Atomic Design principles: `/components/atoms`, `/components/molecules`, `/components/organisms`. Reusable, global components reside here. Screen-specific components can be located within their respective screen's folder.
+                </instruction>
+            </rule>
+
+            <rule category="Component Design">
+                <instruction id="C-01" name="TypeScript Props Interface">
+                    Every component MUST have a well-defined TypeScript interface for its props, ending with the suffix 'Props' (e.g., ArtCardProps).
+                </instruction>
+                <instruction id="C-02" name="Separation of Concerns">
+                    Separate logic from presentation. Use custom hooks (prefixed with 'use') to encapsulate complex business logic, keeping the component's JSX clean and focused on rendering.
+                </instruction>
+                <instruction id="C-03" name="Composition over Inheritance">
+                    Build complex UIs by composing simple, reusable components. Avoid creating monolithic components with excessive props and complex conditional rendering logic.
+                </instruction>
+            </rule>
+
+            <rule category="Styling (UI)">
+                <instruction id="ST-01" name="StyleSheet API First">
+                    Always use `StyleSheet.create()` for styling. It optimizes performance by sending the style objects only once over the bridge.
+                </instruction>
+                <instruction id="ST-02" name="No Inline Styles">
+                    Strictly AVOID inline styles (e.g., `style={{ margin: 10 }}`). They create new objects on every render, harming performance. The only exception is for dynamic styles derived from an animation value.
+                </instruction>
+                <instruction id="ST-03" name="Theming over Hardcoding">
+                    Define all colors, fonts, and spacing units in a central theme file (`/styles/theme.ts`). Import values from the theme instead of hardcoding them. This aligns with the "Character" design pillar.
+                </instruction>
+            </rule>
+
+            <rule category="Performance Optimization">
+                <instruction id="PO-01" name="Native Driver for Animations">
+                    For ALL animations using the `Animated` API or `React Native Reanimated`, `useNativeDriver: true` (or its equivalent) is MANDATORY unless the animation property is not supported by the native driver (e.g., height).
+                </instruction>
+                <instruction id="PO-02" name="Memoize Components">
+                    Wrap components in `React.memo` to prevent unnecessary re-renders, especially for list items (`<ArtCard />
+`). Use `useCallback` for functions passed as props to memoized children.
+                </instruction>
+                <instruction id="PO-03" name="Enforce FlashList Usage">
+                    For ALL vertical lists, especially the Timeline, `FlashList` from Shopify is the required component. Do not use `FlatList` or `ScrollView.map`.
+                </instruction>
+            </rule>
+
+            <rule category="Code Quality & Commits">
+                <instruction id="CQ-01" name="Strict Naming Conventions">
+                    - Components: `PascalCase` (e.g., TimelineScreen.tsx)
+                    - Hooks: `camelCase` with `use` prefix (e.g., useSignalData.ts)
+                    - Variables/Functions: `camelCase`
+                    - Types/Interfaces: `PascalCase` (e.g., SignalData)
+                </instruction>
+                <instruction id="CQ-02" name="Conventional Commits">
+                    All git commit messages MUST follow the Conventional Commits specification. Example: `feat(timeline): implement pull-to-reveal search`. This standardizes history and simplifies changelog generation.
+                </instruction>
+            </rule>
+
+            <rule category="Operational Directives">
+                <instruction id="OP-01" name="No Project Execution">
+                    <description>
+                        After code generation is complete, do not execute any project startup commands (e.g., `npx expo start`, `yarn ios`). The project execution and hot-reloading are managed by an external background process. Your task concludes upon successful code generation.
+                    </description>
+                </instruction>
+            </rule>
+        </directives>
+    </developmentRules>
+
+    <technologyStackAndWorkflow>
+        <stack name="Recommended Library Stack (Whitelist)">
+
+            <libraryCategory name="Core Framework & Navigation (The Foundation)">
+                <library name="React Navigation (v6+)" purpose="Application Navigation">
+                    <reason>The absolute community standard. Powerful, great ecosystem, and integrates perfectly with shared element transitions.</reason>
+                </library>
+                <library name="React Native Gesture Handler" purpose="Gesture Handling">
+                    <reason>The foundation for all advanced gestures. Used with Reanimated to create native-like, fluid interactions.</reason>
+                </library>
+                <library name="React Native Reanimated (v3+)" purpose="Animation Engine">
+                    <reason>The core of all our animation concepts. Far superior in performance to the built-in Animated API, it is the ultimate weapon for all fluid dynamic effects.</reason>
+                </library>
+            </libraryCategory>
+
+            <libraryCategory name="UI, Layout &amp; Visuals (The Look &amp; Feel)">
+                <library name="@shopify/flash-list" purpose="High-Performance Lists">
+                    <reason>The performance guarantee for the "Rhythm" waterfall layout. Remains smooth even with massive amounts of data.</reason>
+                </library>
+                <library name="React Native Skia" purpose="2D Graphics Rendering">
+                    <reason>The best choice for implementing the "Flowing Light" dynamic background. Offers extremely high performance and enables stunning visual effects.</reason>
+                </library>
+                <library name="expo-blur" purpose="Glassmorphism Effect">
+                    <reason>The official blur effect library from Expo. It offers seamless integration with the Expo ecosystem and is our preferred solution for implementing the 'Glaze/Crystal' effect.</reason>
+                </library>
+                <library name="Lottie React Native" purpose="Lottie Animations">
+                    <reason>Perfect for the reward animation in the "Vending Machine". Excellent cross-platform performance.</reason>
+                </library>
+                <library name="React Native SVG" purpose="SVG Support">
+                    <reason>Used to display the linear icon system from the "Character" pillar, ensuring icons are sharp at any size.</reason>
+                </library>
+            </libraryCategory>
+
+            <libraryCategory name="Feature Modules &amp; Device APIs (The Features)">
+                <library name="React Native Maps" purpose="Maps">
+                    <reason>The designated library for the "Footprints" module. Provides native maps for a far superior experience over any web-based map.</reason>
+                </library>
+                <library name="@react-native-firebase" purpose="Backend Service (Firestore API)">
+                    <reason>The best bridge to connect to our designated Firestore database. Modular design allows for on-demand installation.</reason>
+                </library>
+            </libraryCategory>
+
+            <libraryCategory name="State Management (The Brain)">
+                <library name="Zustand" purpose="Global State Management">
+                    <reason>Minimalist, modern, and powerful. Avoids Redux boilerplate, perfect for managing global state like user info and points.</reason>
+                </library>
+                <library name="TanStack Query (React Query)" purpose="Server State Management">
+                    <reason>Automatically handles loading, caching, synchronization, and retries for data from Firestore. A must-have tool for modern applications.</reason>
+                </library>
+            </libraryCategory>
+
+        </stack>
+
+        <workflows name="Recommended Workflows (Methodologies)">
+            <workflow name="Embrace Expo (especially Expo Dev Client)">
+                <description>This is the top recommendation to solve the "always restarting to install libraries" pain point. It greatly simplifies development and build processes, boosting efficiency with features like OTA updates and the Dev Client.</description>
+            </workflow>
+            <workflow name="Use Tamagui as the UI System">
+                <description>A highly performant, cross-platform UI library. It allows you to write styles more like web CSS with advanced features like responsive design, while its compiler optimizes them for maximum performance. This is a great solution for the previously mentioned "CSS problem".</description>
+            </workflow>
+            <workflow name="Build a Storybook Component Library">
+                <description>Develop and test core components like ArtCard in isolation using Storybook. This allows you to focus on the look and feel of a single component without needing to see it in the full app, drastically improving development speed and component quality.</description>
+            </workflow>
+        </workflows>
+
+    </technologyStackAndWorkflow>
+
+</cursorRulers>
